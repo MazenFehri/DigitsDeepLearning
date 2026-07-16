@@ -3,6 +3,9 @@
 Draw a digit (0-9) in the browser and get a live prediction from a PyTorch CNN, trained
 on MNIST and served through a FastAPI backend running in Docker.
 
+**Live demo:** https://digitsdeeplearning.onrender.com/
+(free tier — spins down after ~15 min idle, first request after that takes 30-60s to wake up)
+
 ## The model
 
 Two CNNs are trained and served side by side:
@@ -41,7 +44,8 @@ This project started as a single notebook and was deliberately rebuilt piece by 
   default CUDA one.
 - **Deployment** — taking something that only ran in a notebook on one machine and
   making it a real, reachable web app: a FastAPI backend, a canvas-based frontend, and
-  a container that runs identically locally and on a hosting platform.
+  a container that runs identically locally and on [Render](https://render.com), the
+  hosting platform it's deployed to.
 
 ## Project structure
 
