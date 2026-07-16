@@ -7,9 +7,9 @@ on MNIST and served through a FastAPI backend running in Docker.
 
 Two CNNs are trained and served side by side:
 
-- **`MNIST_v2`** — a baseline CNN: two convolutional blocks (`Conv2d → ReLU → Conv2d → ReLU → MaxPool2d`,
+- **`MNIST_v2`**  a baseline CNN: two convolutional blocks (`Conv2d → ReLU → Conv2d → ReLU → MaxPool2d`,
   120 channels), followed by a linear classifier.
-- **`MNIST_v3`** — the same architecture plus `Dropout2d` in every block, trained with
+- **`MNIST_v3`**  the same architecture plus `Dropout2d` in every block, trained with
   random affine augmentation (rotation + translation) so it generalizes better to
   hand-drawn digits instead of just MNIST's clean, centered training images.
 
@@ -27,19 +27,19 @@ Two CNNs are trained and served side by side:
 
 This project started as a single notebook and was deliberately rebuilt piece by piece to learn:
 
-- **Going modular** — splitting a notebook into `data_setup.py` (datasets/dataloaders),
+- **Going modular** splitting a notebook into `data_setup.py` (datasets/dataloaders),
   `model.py` (architecture only, no training logic baked in), `engine.py` (reusable
   `train_step`/`test_step` functions), and `train.py` (the script that wires it all
   together and saves weights) — instead of one long notebook that's hard to reuse or run
   outside itself.
-- **PyTorch fundamentals** — CNNs, `Dropout2d` for regularizing conv feature maps,
+- **PyTorch fundamentals**  CNNs, `Dropout2d` for regularizing conv feature maps,
   `torchmetrics` for accuracy tracking, and data augmentation (`RandomAffine`) to close
   the gap between clean training data and messy real-world input.
-- **Docker** — writing a `Dockerfile` from scratch, understanding image layers and build
+- **Docker**  writing a `Dockerfile` from scratch, understanding image layers and build
   caching (ordering `COPY`/`RUN` so dependency installs aren't repeated on every code
   change), and keeping the image lean with a CPU-only PyTorch build instead of the
   default CUDA one.
-- **Deployment** — taking something that only ran in a notebook on one machine and
+- **Deployment**  taking something that only ran in a notebook on one machine and
   making it a real, reachable web app: a FastAPI backend, a canvas-based frontend, and
   a container that runs identically locally and on a hosting platform.
 
