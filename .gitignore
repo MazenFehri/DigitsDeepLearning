@@ -1,0 +1,7 @@
+data/
+.vscode/
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+sample_predictions.png
+confusion_matrix.png

@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Digit Recognizer</title>
+<style>
+  body {
+    font-family: system-ui, sans-serif;
+    background: #111;
+    color: #eee;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    padding: 2rem 1rem;
+  }
+  h1 { font-size: 1.25rem; font-weight: 600; margin: 0; }
+  #canvas {
+    background: #000;
+    border: 2px solid #444;
+    border-radius: 4px;
+    touch-action: none;
+    cursor: crosshair;
+  }
+  .buttons { display: flex; gap: 0.5rem; }
+  button {
+    padding: 0.5rem 1.25rem;
+    font-size: 1rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  #predictBtn { background: #4f8cff; color: white; }
+  #clearBtn { background: #333; color: #eee; }
+  #result {
+    display: flex;
+    gap: 1.5rem;
+    font-size: 1.1rem;
+    min-height: 1.5em;
+  }
+  #result .model-name { font-size: 0.8rem; color: #999; }
+  #result .digit { font-size: 2rem; font-weight: 700; }
+  #result .unavailable { color: #666; font-style: italic; }
+  #debug {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+  }
+  #debug img {
+    border: 2px solid #444;
+    border-radius: 4px;
+    image-rendering: pixelated;
+  }
+  #debug span { font-size: 0.8rem; color: #999; }
+</style>
+</head>
+<body>
+  <h1>Draw a digit (0-9)</h1>
+  <canvas id="canvas" width="280" height="280"></canvas>
+  <div class="buttons">
+    <button id="clearBtn">Clear</button>
+    <button id="predictBtn">Predict</button>
+  </div>
+  <div id="result"></div>
+  <div id="debug"></div>
+
+  <script>
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    const resultEl = document.getElementById('result');
+
+    function resetCanvas() {
+      ctx.fillStyle = '#000';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.strokeStyle = '#fff';
+      ctx.lineWidth = 20;
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+    }
+    resetCanvas();
+
+    let drawing = false;
+    let lastX = 0, lastY = 0;
+
+    function getPos(e) {
+      const rect = canvas.getBoundingClientRect();
+      const point = e.touches ? e.touches[0] : e;
+      return {
+        x: (point.clientX - rect.left) * (canvas.width / rect.width),
+        y: (point.clientY - rect.top) * (canvas.height / rect.height),
+      };
+    }
+
+    function start(e) {
+      e.preventDefault();
+      drawing = true;
+      const p = getPos(e);
+      lastX = p.x;
+      lastY = p.y;
+    }
+
+    function move(e) {
+      if (!drawing) return;
+      e.preventDefault();
+      const p = getPos(e);
+      ctx.beginPath();
+      ctx.moveTo(lastX, lastY);
+      ctx.lineTo(p.x, p.y);
+      ctx.stroke();
+      lastX = p.x;
+      lastY = p.y;
+    }
+
+    function end() {
+      drawing = false;
+    }
+
+    canvas.addEventListener('mousedown', start);
+    canvas.addEventListener('mousemove', move);
+    canvas.addEventListener('mouseup', end);
+    canvas.addEventListener('mouseleave', end);
+    canvas.addEventListener('touchstart', start);
+    canvas.addEventListener('touchmove', move);
+    canvas.addEventListener('touchend', end);
+
+    document.getElementById('clearBtn').addEventListener('click', () => {
+      resetCanvas();
+      resultEl.textContent = '';
+    });
+
+    document.getElementById('predictBtn').addEventListener('click', async () => {
+      resultEl.textContent = 'Predicting...';
+      const image = canvas.toDataURL('image/png');
+      try {
+        const res = await fetch('/predict', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ image }),
+        });
+        if (!res.ok) throw new Error(`Server error: ${res.status}`);
+        const data = await res.json();
+        resultEl.innerHTML = Object.entries(data.predictions).map(([name, pred]) => {
+          if (!pred) return `<div><div class="model-name">${name}</div><div class="unavailable">not trained yet</div></div>`;
+          const pct = (pred.confidence * 100).toFixed(1);
+          return `<div><div class="model-name">${name}</div><span class="digit">${pred.digit}</span> (${pct}%)</div>`;
+        }).join('');
+        document.getElementById('debug').innerHTML =
+          `<img src="${data.debug_image}" width="140" height="140" alt="what the model saw">
+           <span>what the model actually saw (28x28, upscaled)</span>`;
+      } catch (err) {
+        resultEl.textContent = `Error: ${err.message}`;
+      }
+    });
+  </script>
+</body>
+</html>
