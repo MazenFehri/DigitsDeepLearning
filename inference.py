@@ -62,7 +62,7 @@ for i, sample in enumerate(test_samples):
       plt.title(title_text, fontsize=10, c="r") # red text if wrong
   plt.axis(False);
 
-plt.savefig("sample_predictions.png")
+plt.savefig("images/sample_predictions.png")
 plt.show()
 
 from data_setup import create_dataloader
@@ -96,5 +96,5 @@ fig, ax = plot_confusion_matrix(
 
 
 
-fig.savefig("confusion_matrix.png")
+fig.savefig("images/confusion_matrix.png")
 plt.show()
