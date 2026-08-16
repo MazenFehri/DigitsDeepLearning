@@ -1,10 +1,21 @@
-# Digit Recognizer
+![Digit Recognizer](images/banner.svg)
+
+![python](https://img.shields.io/badge/python-3.11-3776AB?logo=python&logoColor=white)
+![pytorch](https://img.shields.io/badge/model-PyTorch%20CNN-EE4C2C?logo=pytorch&logoColor=white)
+![fastapi](https://img.shields.io/badge/backend-FastAPI-009688?logo=fastapi&logoColor=white)
+![docker](https://img.shields.io/badge/deploy-Docker-2496ED?logo=docker&logoColor=white)
 
 Draw a digit (0-9) in the browser and get a live prediction from a PyTorch CNN, trained
 on MNIST and served through a FastAPI backend running in Docker.
 
 **Live demo:** https://digitsdeeplearning.onrender.com/
 (free tier — spins down after ~15 min idle, first request after that takes 30-60s to wake up)
+
+## Demo
+
+<video src="demo.mp4" controls muted playsinline width="600">
+  Demo video — draw a digit and watch the live prediction. See demo.mp4 in the repo root.
+</video>
 
 ## The model
 
