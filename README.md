@@ -13,9 +13,9 @@ on MNIST and served through a FastAPI backend running in Docker.
 
 ## Demo
 
-<video src="demo.mp4" controls muted playsinline width="600">
-  Demo video — draw a digit and watch the live prediction. See demo.mp4 in the repo root.
-</video>
+![Demo: drawing a digit and getting a live prediction](images/demo.gif)
+
+([full-quality video](demo.mp4))
 
 ## The model
 
